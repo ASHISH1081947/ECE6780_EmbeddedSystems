@@ -62,15 +62,15 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
-	uint32_t debouncer = 0;
-	uint32_t input_signal=0;
+
 	HAL_Init(); // Reset of all peripherals, init the Flash and Systick
 //SystemClock_Config(); //Configure the system clock
 /* This example uses HAL library calls to control
 the GPIOC peripheral. You’ll be redoing this code
 with hardware register access. */
 //__HAL_RCC_GPIOC_CLK_ENABLE(); // Enable the GPIOC clock in the RCC
-	RCC->AHBENR |= (1<<19) | (1<<17);// Enable the GPIOC and GPIOA clock in the RCC
+	// Enable the GPIOC and GPIOA clock in the RCC
+	RCC->AHBENR |= (1<<19);
 
 	// Setting Moder for PC6 and PC7
 	GPIOC->MODER |= (1 << 12);
@@ -88,17 +88,7 @@ with hardware register access. */
 	// Setting PUPDR for PC6 and PC7
 	GPIOC->PUPDR |= ((0 << 12) | (0 << 13));
 	GPIOC->PUPDR |= ((0 << 14) | (0 << 15));
-	// Setting for PA0 user button
-	//GPIOA->MODER &= ~(1<<0) ;
-	//GPIOA->MODER &= ~(1<<1);
-	GPIOA->MODER |= (0 << 0);
-	GPIOA->MODER |= (0<< 1);
-	GPIOA->OSPEEDR |= (1 << 1);
-	//GPIOA->OSPEEDR &= ~(1 << 0);
-	GPIOA->OSPEEDR |= (0 << 0);
-	GPIOA->PUPDR |= (1 << 1);
-	//GPIOA->PUPDR &= ~(1 << 0);
-	GPIOA->PUPDR |= (0 << 0);
+
 // Set up a configuration struct to pass to the initialization function
 //GPIO_InitTypeDef initStr = {GPIO_PIN_7 | GPIO_PIN_9,
 //GPIO_MODE_OUTPUT_PP,
@@ -111,35 +101,12 @@ with hardware register access. */
 GPIOC->ODR |= (1<<6);
 GPIOC->ODR |= (0<<7);
 while (1) {
-	debouncer = (debouncer << 1);
-//	debouncer = (debouncer << 1); 
-	// Always shift every loop iteration
-//input_signal = (GPIOA->IDR &1);
-//if (input_signal) { // If input signal is set/high
-//debouncer |= 0x01; // Set lowest bit of bit-vector
-//}
-if(GPIOA->IDR & 0x01)
-{
-	debouncer |= 0x01;
-}
-if (debouncer == 0xFFFFFFFF) {
-// This code triggers repeatedly when button is steady high!
-}
-if (debouncer == 0x00000000) {
 
-// This code triggers repeatedly when button is steady low!
-}
-if (debouncer == 0x7FFFFFFF) {
 	GPIOC->ODR ^= 0b001000000;
 	GPIOC->ODR ^= 0b010000000;
-	HAL_Delay(3);
-// This code triggers only once when transitioning to steady high!
-}
-//HAL_Delay(200); // Delay 200ms
-	//GPIOC->ODR ^= 0b001000000;
-	//GPIOC->ODR ^= 0b010000000;
-// Toggle the output state of both PC8 and PC9
-//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7 | GPIO_PIN_9);
+	HAL_Delay(1000);
+
+
 }
   /* USER CODE BEGIN 1 */
 
